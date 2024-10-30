@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  Pronouns String?
+  bio String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  //relationships
+  posts Posts[] @relation("userPosts") //oner user can have many posts
+  likes Likes[] @relation("userLikes") //one user can have many likes
+  dislikes Dislikes[] @relation("userDislikes")
+  comments Comments[]  @relation("userComments") //user can have many comments
+}
+
+model Posts{
+  id String @id @default(uuid()) 
+  title String
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published Boolean @default(false)
+  views Int @default(0)
+  author String
+  authorId String
+  user User @relation("userPosts",fields: [authorId],references: [id])
+  tags String 
+  //relationships
+  comments Comments[] @relation("postComments") //post can have many comments
+  likes Likes[] @relation("postLikes") //one post can have many likes
+  dislikes Dislikes[] @relation("postDislikes")
+}
+model Likes {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  userId String
+  user User @relation("userLikes",fields: [userId],references: [id])
+  postId String?
+  posts Posts? @relation("postLikes",fields:[postId],references: [id])
+  commentId String?
+  comments Comments? @relation("commentLikes",fields:[commentId],references: [id]) 
+}
+
+model Dislikes{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  userId String
+  user User @relation("userDislikes",fields: [userId], references: [id])
+  postId String?
+  posts Posts? @relation("postDislikes",fields: [postId], references: [id])
+  commentId String?
+  comments Comments? @relation("commentDislikes", fields: [commentId],references: [id])
+}
+
+
+model Comments{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  userId String
+  user User @relation("userComments",fields: [userId],references: [id])
+  postId String
+  posts Posts @relation("postComments",fields: [postId],references: [id])
+  likes Likes[] @relation("commentLikes")
+  dislikes Dislikes[] @relation("commentDislikes")
+}
