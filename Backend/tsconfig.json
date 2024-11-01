@@ -12,9 +12,6 @@
       "@cloudflare/workers-types/2023-07-01"
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
-    "paths": {
-      "@prisma/*": ["./node_modules/@prisma/*"]
-    }
+    "jsxImportSource": "hono/jsx"
   },
 }

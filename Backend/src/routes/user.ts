@@ -1,9 +1,11 @@
 import { PrismaClient } from "@prisma/client/edge"
 import { withAccelerate } from "@prisma/extension-accelerate"
 import { Hono } from "hono"
+import { sign } from "hono/jwt"
 const app = new Hono<{
     Bindings:{
-        DATABASE_URL:string
+        DATABASE_URL:string,
+        JWT_SECRET:string
     }
 }>();
 
@@ -21,13 +23,16 @@ app.post('/app/v1/signup',async(c)=>{
                 password: body.password,
             }
         });
-        return c.text("jwt here")
+        const jwt = await sign({id:user.id}, c.env.JWT_SECRET)
+        c.status(201)
+        return c.json({token:jwt})
     }catch(e){
-        return c.status(403)
+        c.status(403)
+        return c.json("error while signing up")
     }
 })
 
-app.post("/app/v1/signin", async (c)=>{
+app.post("/app/v1/signin", async(c)=>{
     const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
@@ -43,9 +48,14 @@ app.post("/app/v1/signin", async (c)=>{
             c.status(403)
             return c.json("Cannot find the user")
         }
-        return ("jwt here")
+        const jwt = sign({id:user.id},c.env.JWT_SECRET)
+        c.status(200)
+        return c.json({token:jwt})
     }catch(e){
         console.error(e)
-        return c.status(500)
+        c.status(500)
+        return c.json("Error while signin up")
     }
 })
+
+export default app
