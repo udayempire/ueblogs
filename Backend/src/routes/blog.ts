@@ -10,10 +10,10 @@ export const blogRouter = new Hono<{
         userId:string
     }
 }>()
+//middleware
 blogRouter.use("/*",async (c,next)=>{
     const authHeader = c.req.header("Authorization") || ""
     const token = authHeader.split(" ")[1]
-    console.log(token)
     try{
         const payload = await verify(token,c.env.JWT_SECRET)
         // @ts-ignore
@@ -26,7 +26,7 @@ blogRouter.use("/*",async (c,next)=>{
     }
 })
 //posting the blog
-blogRouter.post("/new-blog", async (c) => {
+blogRouter.post("/createblog", async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
@@ -82,7 +82,7 @@ blogRouter.get("/bulk",async (c)=>{
     return c.json(blogs)
 })
 //updating the blogs
-blogRouter.put('/update',async (c)=>{
+blogRouter.put('/updateblog',async (c)=>{
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
@@ -114,25 +114,36 @@ blogRouter.put('/update',async (c)=>{
 })
 
 //delete blogs
-blogRouter.delete("/delete",async(c)=>{
+blogRouter.delete("/deleteblog/:id",async(c)=>{
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
-    const body = await c.req.json();
+    const userId = c.get("userId")
+    const blogId = c.req.param("id")
+    console.log(blogId)
     try{
-        const deleteBlog= await prisma.posts.delete({
+        const blogPost = await prisma.posts.findUnique({
             where:{
-                id: body.id,
-            },
+                id:blogId
+            }
+        })
+        if(!blogPost){
+            c.status(404)
+            return c.json("Blog Doesnt exist")
+        }
+        if(blogPost?.authorId!==userId){
+            c.status(403)
+            return c.json("You cannot delete someone else Blog")
+        }
+        const deleteBlog =await prisma.posts.delete({
+            where:{
+                id:blogId
+            }
         })
         c.status(200)
-        return c.json({message:"Blog deleted Successfully",deletedBlog:deleteBlog})
+        return c.json({message:"Successfully deleted Blog",deletedBlog:deleteBlog})
     }catch(e){
         console.log(e)
-        if(e==="P2025"){ // Prisma specific error code for "Record not found"
-            c.status(404)
-            return c.json("No such blogs exist")
-        }
         c.status(500)
         return c.json("An error occurred while deleting the blog or no such blogs exist")
     }

@@ -32,7 +32,7 @@ model Posts{
   published Boolean @default(false)
   views Int @default(0)
   author User @relation("userPosts",fields: [authorId],references: [id])
-  authorId String
+  authorId String 
   //relationships
   comments Comments[] @relation("postComments") //post can have many comments
   likes Likes[] @relation("postLikes") //one post can have many likes
