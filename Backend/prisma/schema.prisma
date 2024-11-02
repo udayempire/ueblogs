@@ -31,10 +31,8 @@ model Posts{
   updatedAt DateTime @updatedAt
   published Boolean @default(false)
   views Int @default(0)
-  author String
+  author User @relation("userPosts",fields: [authorId],references: [id])
   authorId String
-  user User @relation("userPosts",fields: [authorId],references: [id])
-  tags String 
   //relationships
   comments Comments[] @relation("postComments") //post can have many comments
   likes Likes[] @relation("postLikes") //one post can have many likes
