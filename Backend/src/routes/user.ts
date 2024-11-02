@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client/edge"
 import { withAccelerate } from "@prisma/extension-accelerate"
 import { Hono } from "hono"
 import { sign } from "hono/jwt"
-const app = new Hono<{
+export const userRouter = new Hono<{
     Bindings:{
         DATABASE_URL:string,
         JWT_SECRET:string
@@ -10,7 +10,7 @@ const app = new Hono<{
 }>();
 
 
-app.post('/app/v1/signup',async(c)=>{
+userRouter.post('/signup',async(c)=>{
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
@@ -25,14 +25,22 @@ app.post('/app/v1/signup',async(c)=>{
         });
         const jwt = await sign({id:user.id}, c.env.JWT_SECRET)
         c.status(201)
-        return c.json({token:jwt})
-    }catch(e){
-        c.status(403)
-        return c.json("error while signing up")
+        return c.json({jwt})
+    }catch (e:any) {
+        console.error("Signup error:", e);
+        
+        // Handle specific Prisma errors (e.g., unique constraint violation)
+        if (e.code === 'P2002') {  // Prisma error code for unique constraint
+            c.status(409);
+            return c.json({ error: "Email already exists" });
+        }
+
+        c.status(403);
+        return c.json({ error: "Error while signing up" });
     }
 })
 
-app.post("/app/v1/signin", async(c)=>{
+userRouter.post("/signin", async(c)=>{
     const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
@@ -48,7 +56,7 @@ app.post("/app/v1/signin", async(c)=>{
             c.status(403)
             return c.json("Cannot find the user")
         }
-        const jwt = sign({id:user.id},c.env.JWT_SECRET)
+        const jwt = await sign({id:user.id},c.env.JWT_SECRET)
         c.status(200)
         return c.json({token:jwt})
     }catch(e){
@@ -57,5 +65,3 @@ app.post("/app/v1/signin", async(c)=>{
         return c.json("Error while signin up")
     }
 })
-
-export default app
