@@ -112,3 +112,28 @@ blogRouter.put('/update',async (c)=>{
         return c.json("An error occurred while updating the blog or no such blogs exist")
     }
 })
+
+//delete blogs
+blogRouter.delete("/delete",async(c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL,
+    }).$extends(withAccelerate());
+    const body = await c.req.json();
+    try{
+        const deleteBlog= await prisma.posts.delete({
+            where:{
+                id: body.id,
+            },
+        })
+        c.status(200)
+        return c.json({message:"Blog deleted Successfully",deletedBlog:deleteBlog})
+    }catch(e){
+        console.log(e)
+        if(e==="P2025"){ // Prisma specific error code for "Record not found"
+            c.status(404)
+            return c.json("No such blogs exist")
+        }
+        c.status(500)
+        return c.json("An error occurred while deleting the blog or no such blogs exist")
+    }
+})
