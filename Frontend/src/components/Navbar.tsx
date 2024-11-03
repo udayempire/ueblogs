@@ -2,8 +2,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "./ui/button"
 import { Link } from "react-router-dom"
 export const Navbar = () => {
-    return <div className="border-b-2 shadow-sm p-3 flex justify-between items-center">
-        <Link to="/" className="text-lg font-medium ml-8">
+    return <div className="border-b-2 bg-white  p-3 flex justify-between items-center ">
+        <Link to="/" className="text-xl font-extrabold tracking-widest ml-8">
             UEBLOGS
 
         </Link>
@@ -13,7 +13,7 @@ export const Navbar = () => {
                 <img src="Notification.svg" alt="" />
             </div>
             <Avatar>
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>U</AvatarFallback>
             </Avatar>
         </div>
     </div>
