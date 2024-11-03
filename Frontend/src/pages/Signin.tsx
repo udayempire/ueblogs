@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 export const Signin = () => {
     return <div>
         <div className=" grid grid-cols-1 md:grid-cols-2 w-screen h-screen  bg-zinc-50   ">
-            <div className=" hidden md:block p-4  bg-cover bg-center h-screen" style={{ backgroundImage: "url('/nature.png')" }}>
+            <div className=" hidden md:block p-4  bg-cover bg-center h-screen bg-blue-600" style={{ backgroundImage: "url('/nature.png')" }}>
                 <div className="w-full h-full justify-center  items-center flex flex-col p-20">
                     <div className="w-[700px] h-48 bg-white/50 backdrop-blur-sm font-semibold border border-white/30 rounded-sm shadow-lg p-6">
                         <p className="text-lg">
@@ -43,7 +43,7 @@ export const Signin = () => {
                     <Input type="email" id="email" placeholder="Enter your email" />
                 </div>
 
-                <div className="grid w-full max-w-xs md:max-w-smitems-center gap-1.5">
+                <div className="grid w-full max-w-xs md:max-w-sm items-center gap-1.5">
                     <Label htmlFor="password">Password</Label>
                     <Input type="password" id="password" placeholder="Enter your password" />
                 </div>
