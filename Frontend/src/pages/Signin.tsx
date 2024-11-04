@@ -1,8 +1,36 @@
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom"
+import { signinInput } from "@udayempire/ueblogs/dist/index"
+import axios from "axios"
+import { BACKEND_URL } from "../config"
 export const Signin = () => {
+    const navigate = useNavigate()
+    const [postInputs,setPostInputs] = useState<signinInput>({
+        email:"",
+        password:""
+    })
+    async function sendRequest(){
+        try{
+            const response = await axios.post(`${BACKEND_URL}/user/signin`,postInputs)
+            const jwt = response.data.token
+            localStorage.setItem("token",`Bearer ${jwt}`)
+            navigate("/")
+        }catch(e:any){
+            if(e.response){
+                const errMessage = e.response.data.json || "An error occurred";
+                alert(errMessage)
+            }else{
+                alert("An Error occurred")
+            }
+
+            alert("User Doesnt exist or Incorrect Password")
+            console.error(e)
+        }
+    }
     return <div>
         <div className=" grid grid-cols-1 md:grid-cols-2 w-screen h-screen  bg-zinc-50   ">
             <div className=" hidden md:block p-4  bg-cover bg-center h-screen bg-blue-600" style={{ backgroundImage: "url('/nature.png')" }}>
@@ -40,16 +68,27 @@ export const Signin = () => {
 
                 <div className="grid w-full max-w-xs md:max-w-sm items-center gap-1.5">
                     <Label htmlFor="email">Email</Label>
-                    <Input type="email" id="email" placeholder="Enter your email" />
+                    <Input type="email" id="email" placeholder="Enter your email" onChange={(e)=>{
+                        setPostInputs({
+                            ...postInputs,
+                            email:e.target.value
+                        })
+                    }} />
                 </div>
 
                 <div className="grid w-full max-w-xs md:max-w-sm items-center gap-1.5">
                     <Label htmlFor="password">Password</Label>
-                    <Input type="password" id="password" placeholder="Enter your password" />
+                    <Input type="password" id="password" placeholder="Enter your password" onChange={(e)=>{
+                        setPostInputs({
+                            ...postInputs,
+                            password:e.target.value
+                        })
+                    }} />
+
                 </div>
 
-                <Button className="w-full max-w-xs md:max-w-sm" asChild>
-                    <Link to="/login">Sign In</Link>
+                <Button className="w-full max-w-xs md:max-w-sm cursor-pointer" asChild onClick={sendRequest}>
+                    <p>Sign In</p>
                 </Button>
                 <p className="w-full max-w-xs md:max-w-lg text-center text-sm pt-5">
                     Click “Sign in” to agree to Ueblogs’s <span className="underline underline-offset-2 cursor-pointer">Terms of Service </span> and acknowledge that Ueblogs’s <span className="underline underline-offset-2 cursor-pointer">Privacy Policy</span> applies to you.

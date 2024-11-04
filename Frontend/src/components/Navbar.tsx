@@ -7,8 +7,8 @@ export const Navbar = () => {
             UEBLOGS
 
         </Link>
-        <div className="flex text-lg gap-12 items-center mr-8">
-            <Button size="custom">Write</Button>
+        <div className="flex text-lg gap-12 items-center mr-8 ">
+            <Button className="" size="custom">Write</Button>
             <div className="cursor-pointer">
                 <img src="Notification.svg" alt="" />
             </div>
