@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-export const Blog = () => {
+import { Posts } from "@/hooks"
+export const Blog = ({posts}:{posts:Posts}) => {
     return <div className="w-full ">
         <div className="flex justify-center">
             <div className="flex flex-col justify-center items-center  ">
@@ -7,17 +8,17 @@ export const Blog = () => {
                     {/* Post Details */}
                     <div className="flex text-gray-500 items-center gap-4 justify-start">
                         <Avatar>
-                            <AvatarFallback className="text-black">U</AvatarFallback>
+                            <AvatarFallback className="text-black">{posts.author?.name[0]}</AvatarFallback>
                         </Avatar>
-                        <p >Uday</p>
+                        <p >{posts.author?.name}</p>
                         <div className="bg-gray-600 rounded-full w-1 h-1"></div>
                         <p>2 Days Ago</p>
                     </div>
                     {/* Post Heading */}
-                    <h1 className="font-bold text-2xl cursor-pointer">Attachment is the root cause of Destruction</h1>
-                    <p className="text-gray-500">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quia suscipit labore sequi voluptatem repellendus corruption...</p>
+                    <h1 className="font-bold text-2xl cursor-pointer">{posts.title}</h1>
+                    <p className="text-gray-500">{posts.content.slice(0,120)}...</p>
                     <div className="flex gap-5">
-                        <p>3 Min Read</p>
+                        <p>{Math.ceil((posts.content.split(" ").length/200))} Min Read</p>
                         <div className="flex items-center gap-1 cursor-pointer">
                             <img src="upvote.svg" alt="" />
                             <p>25K</p>

@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { BACKEND_URL } from "@/config"
+import axios from "axios"
+import { useEffect, useState } from "react"
 export interface Posts{
     id:string,
     title:string,
@@ -7,8 +9,8 @@ export interface Posts{
     updatedAt:Date,
     published:boolean,
     views:number,
-    authorId:string,
-    //relationships
+    authorId:string,  // change it to author{name:string}
+    //relationships 
     author?:User,
     comments?:Comments[],
     likes?:Likes[],
@@ -57,7 +59,32 @@ export interface Comments{
     likes:Likes[],
     dislikes:Dislikes[],
 }
-export const allPosts=()=>{
+export const useAllPosts=()=>{
     const [loading,setLoading] = useState(true);
-    const [allPosts,setAllPosts] = useState()
+    const [allPosts,setAllPosts] = useState<Posts[]>([]);
+
+    useEffect(()=>{
+        const fetchData = async()=>{
+            try{
+                const token = localStorage.getItem("token")
+                const response = await axios.get(`${BACKEND_URL}/blog/allblogs`,{
+                    headers:{
+                        Authorization: token
+                    }
+                })
+                if (!response) {
+                    alert("No posts")
+                }
+                setAllPosts(response.data)
+                setLoading(false)
+            }catch(e){
+                console.error(e)
+            }
+        }
+        fetchData()
+    },[])
+    return {
+        loading,
+        allPosts
+    }
 }
