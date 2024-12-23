@@ -1,24 +1,27 @@
-import {Navbar} from "../components/Navbar"
+import { Navbar } from "../components/Navbar"
 import { FullBlog } from "@/components/FullBlog"
 import { useBlog } from "../hooks/index"
 import { useParams } from "react-router-dom"
-export const Blog=()=>{
+export const Blog = () => {
     const { id } = useParams()
-    const {loading,blog} = useBlog({
+    const { loading, blog } = useBlog({
         id: id || ""
     });
-    if(loading || !blog){
-        return <div>
-            loading...
+    if (loading || !blog) {
+        return <div className="bg-zinc-50">
+            <Navbar />
+            <div className="">
+                Loading.... Please wait
+            </div>
         </div>
     }
     return <div>
-        <Navbar/>
+        <Navbar />
 
         <div className="flex justify-center mt-10">
-            <FullBlog blog={blog}/>
+            <FullBlog blog={blog} />
         </div>
-        
+
     </div>
 
 }

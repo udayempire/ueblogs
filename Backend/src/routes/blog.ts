@@ -163,34 +163,48 @@ blogRouter.delete("/deleteblog/:id",async(c)=>{
 //getting a single blog
 
 blogRouter.get("/get/:id", async (c) => {
-    const id =c.req.param("id");
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
+    const id = c.req.param("id"); // Check if this works; otherwise, use c.req.params.id
+    console.log("Fetching Blog ID:", id);
+    console.log("hello")
 
-    try{
-        const blog = await prisma.posts.findFirst({
-            where: {
-                id: id
+    const prisma = new PrismaClient({
+        datasources: {
+            db: {
+                url: c.env.DATABASE_URL,
             },
-            select:{
-                id:true,
-                title:true,
-                content:true,
-                author:{
-                    select:{
-                        name:true
-                    }
-                }
-            }
-        })
-        return c.json({
-            blog
-        })
-    }catch(e){
-        c.status(411);
-        return c.json({
-            message:"Error while fetching blog post"
+        },
+    }).$extends(withAccelerate());
+
+    try {
+        const blog = await prisma.posts.findFirst({
+            where: { id },
+            select: {
+                id: true,
+                title: true,
+                content: true,
+                createdAt: true,
+                updatedAt: true,
+                views: true,
+                author: {
+                    select: {
+                        name: true,
+                    },
+                },
+                likes: true,
+                comments: true,
+            },
         });
+
+        if (!blog) {
+            c.status(404);
+            return c.json({ message: "Blog not found" });
+        }
+
+        return c.json({ blog });
+    } catch (e) {
+        console.error("Error fetching blog:", e);
+        c.status(500);
+        return c.json({ message: "Error while fetching blog post" });
     }
-})
+});
+

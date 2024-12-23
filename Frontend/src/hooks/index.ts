@@ -90,12 +90,19 @@ export const useAllPosts=()=>{
 }
 
 export interface Blog {
-    "id":string,
-    "title": string,
-    "content": string,
-    "author": {
-        "name": string
-    },
+    id:string,
+    title:string,
+    content:string,
+    createdAt:Date,
+    updatedAt:Date,
+    published:boolean,
+    views:number,
+    authorId:string,  // change it to author{name:string}
+    //relationships 
+    author?:User,
+    comments?:Comments[],
+    likes?:Likes[],
+    dislikes?:Dislikes[]
 }
 
 export const useBlog=({id}:{id:string})=>{
