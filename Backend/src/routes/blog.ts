@@ -159,3 +159,38 @@ blogRouter.delete("/deleteblog/:id",async(c)=>{
         return c.json("An error occurred while deleting the blog or no such blogs exist")
     }
 })
+
+//getting a single blog
+
+blogRouter.get("/get/:id", async (c) => {
+    const id =c.req.param("id");
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try{
+        const blog = await prisma.posts.findFirst({
+            where: {
+                id: id
+            },
+            select:{
+                id:true,
+                title:true,
+                content:true,
+                author:{
+                    select:{
+                        name:true
+                    }
+                }
+            }
+        })
+        return c.json({
+            blog
+        })
+    }catch(e){
+        c.status(411);
+        return c.json({
+            message:"Error while fetching blog post"
+        });
+    }
+})

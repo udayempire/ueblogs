@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { timeAgo } from "@/utils/timeUtils"
 import { Posts } from "@/hooks"
+import { Link } from "react-router-dom"
 export const Blog = ({ posts }: { posts: Posts }) => {
-    return <div className="w-full ">
+    return <Link to={`/blog/get/${posts.id}`} className="w-full ">
         <div className="flex justify-center">
             <div className="flex flex-col justify-center items-center  ">
                 <div className="p-5 flex flex-col gap-4 w-full max-w-xl border-b">
@@ -36,5 +37,5 @@ export const Blog = ({ posts }: { posts: Posts }) => {
                 </div>
             </div>
         </div>
-    </div>
+    </Link>
 }

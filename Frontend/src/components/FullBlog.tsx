@@ -9,7 +9,7 @@ export const FullBlog = ( {blog }: { blog: Blog }) => {
                     <Avatar>
                         <AvatarFallback className="text-black">U</AvatarFallback>
                     </Avatar>
-                    <p>{posts.author?.name}</p>
+                    <p>{blog.author?.name}</p>
                 </div>
                 <div>
                     <p>2 Nov 2024</p>
