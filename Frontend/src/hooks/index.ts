@@ -88,3 +88,32 @@ export const useAllPosts=()=>{
         allPosts
     }
 }
+
+export interface Blog {
+    "id":string,
+    "title": string,
+    "content": string,
+    "author": {
+        "name": string
+    },
+}
+
+export const useBlog=({id}:{id:string})=>{
+    const [loading,setLoading]= useState(true);
+    const [blog,setBlog] = useState<Blog>()
+
+    useEffect(()=>{
+        axios.get(`${BACKEND_URL}/api/v1/blog/get/${id}`,{
+            headers:{
+                Authorization: localStorage.getItem("token")
+            }
+        })
+        .then(response=>{
+            setBlog(response.data.blog)
+            setLoading(false)
+        })
+    },[id])
+    return {
+        loading,blog
+    }
+}
