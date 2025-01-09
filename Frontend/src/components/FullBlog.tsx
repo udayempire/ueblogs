@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback } from "./ui/avatar"
 import { Blog } from "@/hooks"
 import { timeAgo } from "@/utils/timeUtils"
+import { Button } from "./ui/button"
 export const FullBlog = ( {blog }: { blog: Blog }) => {
     return <div className="w-3/5 ">
         <div className="flex flex-col gap-5">
@@ -19,6 +20,9 @@ export const FullBlog = ( {blog }: { blog: Blog }) => {
             <div className="flex justify-between items-center">
                 <p>{Math.ceil((blog.content.split(" ").length / 200))} Min Read</p>
                 <div className="flex gap-6">
+                    <Button>Summarize Text</Button> 
+                    <Button>Listen</Button> 
+                    <Button>Follow Creator</Button> 
                     <div className="flex items-center gap-1 cursor-pointer">
                         <img src="upvote.svg" alt="" />
                         <p>25K</p>
